@@ -1,0 +1,71 @@
+cd
+
+1. MySQL Server 설치		
+sudo apt-get install mysql-server mysql-client		
+mysql --version		
+sudo service mysql start		
+     L mysql 시작 명령어		
+ps -ef | grep mysql		
+sudo mysqladmin -uroot create mypython -p		
+     L mypython이라는 데이터 베이스 만듦		
+		
+2. 계정 확인 하기		
+sudo mysql -uroot -p		
+		
+3. mysql> 로 접속해서 데이터 베이스 만든거에 대한 여러가지 확인함		
+use mypython		
+show tables;		
+use mysql		
+desc user;		
+select host,user,select_priv from  user;		
+desc db;		
+select host,db,user,select_priv from db;		
+show databases;		
+create user 'mypython'@'localhost' identified by 'ubuntu';	
+grant all privileges on mypython.* to 'mypython'@'localhost';	
+flush privileges;	
+	
+select host,user,select_priv from user;	
+    L mypython등록 된거 확인 함	
+	
+delete from user where user='user_id';	
+flush privileges;	
+     L 사용자 삭제	
+	
+mysql -umypython -p	
+     L mypython 사용자로 mysql 접속 함	
+show databases;	
+     L 데이타 베이스 확인 	
+4. 테이블 등록	
+5. 그걸 mypython에 등록함		
+mysql -umypython -p mypython <dept_emp.sql		
+mysql -umypython -p mypython		
+     L mysql접속		
+show tables;
+select * from emp;
+-----------------
+$ mysql -umy3rdsemi -p my3rdsemi	
+   L mysql -u[사용자아이디] -p [사용자아이디]	
+   L table 정보와 local_infile의 value의 on/off확인. off로 되어 있으면 on 으로 바꿔야 함	
+$ sudo mysql -u root			
+    L 비번 입력
+		
+mysql> use mysql;			
+mysql> update user set plugin='mysql_native_password' where user='root';			
+    L root의 plugin을 mysql_native_password로 바꿔 준다			
+mysql> flush privileges;			
+mysql> select user,host,plugin from user;			
+    L root의 plugin을 mysql_native_password로 바뀐것 확인			
+mysql> set global local_infile=1;			
+mysql> show variables like 'local_infile';			
+    L 바뀐거 확인			
+
+
+
+$ mysql -umypython -p --local-infile mypython
+load data local infile '/home/kosmo113/python/mynote_dir/maina/dentalreview_mysql_220424.csv'
+into table reviewboard
+fields terminated by ','
+enclosed by '"'
+lines terminated by '\n'
+ignore 1 rows;

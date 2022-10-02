@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.main.ateam.hospital.dao.HospitalDao">
+
+	<select id="getCnt" resultType="int" parameterType="svo">
+		select count(*)
+		from hospital h,
+		(select cnum from company where cstatus=1) c
+		where c.cnum = h.cnum
+		<choose>
+			<when test="search != null and search != ''">
+<!-- 				<choose> -->
+<!-- 					<when test="category == 'all'"> -->
+						AND h.hloc || h.hname || h.hcate like '%' || #{search} || '%'
+<!-- 					</when> -->
+<!-- 					<when test="category == 'hname'"> -->
+<!-- 						AND h.hname like '%' || #{search} || '%' -->
+<!-- 					</when> -->
+<!-- 					<when test="category == 'hcate'"> -->
+<!-- 						AND h.hcate like '%' || #{search} || '%' -->
+<!-- 					</when> -->
+<!-- 				</choose> -->
+			</when>
+		</choose>
+	</select>
+
+	<select id="getList" resultType="hvo" parameterType="svo">
+		select * from (
+			select rownum r_num, a.* from (
+				select h.* from hospital h, company c
+				where h.cnum = c.cnum and c.cstatus=1
+				<include refid="search" />
+				order by h.cnum desc
+			) a
+		)where r_num between #{beginPerPage} and #{endPerPage}
+	</select>
+	<!-- 검색 기능 sql: select id="listpage"에 include함 -->
+	<sql id="search">
+		<choose>
+			<when test="search != null and search != ''">
+<!-- 				<if test="category == 'hloc'"> -->
+					AND hloc || h.hname || h.hcate  like '%' || #{search} || '%'
+<!-- 					</if> -->
+<!-- 				<if test="category == 'hname'"> -->
+<!-- 					AND hname like '%' || #{search} || '%'</if> -->
+<!-- 				<if test="category == 'hcate'"> -->
+<!-- 					AND hcate like '%' || #{search} || '%'</if> -->
+			</when>
+		</choose>
+	</sql>
+
+	<select id="getListBack" resultType="hvo">
+		SELECT rownum r_num,c.cnum,h.hname,h.hloc,h.otime,
+		h.ctime,h.hcate,h.htel,h.hurl,c.cdate,
+		c.ccate from hospital h, company c
+		where h.cnum = c.cnum and c.cstatus=1
+	</select>
+
+<select id="getDetail" parameterType="int" resultType="hvo">
+	select * from hospital where cnum=#{num}
+</select>
+<select id="hospCheck" parameterType="map" resultType="int">
+	select hname from hospital where crn=#{crn}
+</select>
+<insert id="addCompany" parameterType="cvo">
+ 		insert into company 
+        values(company_seq.nextVal, #{crn}, #{cpwd}, #{ccate}, 0, sysdate,#{hgrade})
+    </insert>
+<insert id="addHospital" parameterType="hvo">
+    	<selectKey keyProperty="cnum" resultType="int" order="BEFORE">
+    		select company_seq.currVal from dual
+    	</selectKey>
+    	insert into hospital values(#{cnum},#{hname},#{hloc},#{otime},#{ctime},
+							  #{hcate},#{htel},#{hurl})
+</insert>
+
+	<!-- crn 중복체크 -->
+	<select id="crnCheck" parameterType="map" resultType="int">
+		select count(*) from hospital where crn = #{crnv}
+	</select>
+
+	<!-- 병원 - 의사 명단 -->
+	<select id="choiceDoctorList" parameterType="int"
+		resultType="doctorVO">
+		select dmajor,dname,dnum from doctor where cnum=#{cnum}
+	</select>
+	<!-- resultMap -->
+	<!--병원 mypage - 의사 목록 -->
+	<select id="hospital_DoctorList" resultMap="hospitalDoctorResult"
+		parameterType="int">
+		select h.hname,d.dname,d.dmajor from hospital h, doctor d where h.cnum=d.cnum and
+		h.cnum=#{cnum}
+	</select>
+
+	<resultMap id="hospitalDoctorResult" type="hvo">
+		<id column="cnum" property="cnum" />
+		<result column="hname" property="hname" />
+		<result column="otime" property="otime" />
+		<result column="ctime" property="ctime" />
+
+		<collection property="doctorVO" ofType="doctorVO"
+			javaType="java.util.List">
+			<id column="cnum" property="cnum" javaType="int" />
+			<result column="dnum" property="dnum" />
+			<result column="dname" property="dname" />
+			<result column="dmajor" property="dmajor" />
+		</collection>
+	</resultMap>
+	
+	
+
+	<select id="getHospital" resultType="hvo" parameterType="map">
+		select hname from hospital 
+		<choose>
+			<when test="address == '가정의학과'">
+			 where hcate like '%가정의학과%'
+			</when>
+			<when test="address == '이비인후과'">
+			where hcate like '%이비인후과%'
+			</when>
+			<when test="address == '피부과'">
+			where hcate like '%피부과%'
+			</when>
+				<when test="address == '정형외과'">
+			where hcate like '%정형외과%'
+			</when>
+				<when test="address == '치과'">
+			where hcate like '%치과%'
+			</when>
+				<when test="address == '내과'">
+			where hcate like '%내과%'
+			</when>
+			<when test="address == '정신건강의학과'">
+			where hcate like '%정신건강의학과%'
+			</when>
+		</choose>
+		
+	</select>
+	
+	
+<select id="selectHospitalCate" resultType="hvo">
+	select distinct hcate from hospital 
+</select>
+
+<select id="selectHospital" resultType="hvo" parameterType="map">
+select hname from hospital
+where cnum in (select cnum from company where cstatus=1) and hcate= #{choice} order by 1
+</select>
+
+	<select id="getCate" resultType="hvo">
+		select distinct hcate from hospital
+	</select>
+	
+	<select id="getSelectHospital" parameterType="map" resultType="hvo">
+	select * from hospital where hname = #{name}
+	</select>
+	
+	<select id="addDoctor" parameterType="int" resultType="hvo">
+		select hname,hcate,cnum from hospital where cnum= #{cnum}
+	</select>
+	
+	
+</mapper>

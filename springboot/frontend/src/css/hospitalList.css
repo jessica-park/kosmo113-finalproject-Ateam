@@ -1,0 +1,41 @@
+.card {
+  color: #232323;
+  width: 430px;
+}
+
+.card-body button {
+  font-size: 8px;
+  max-width: 200px;
+}
+.card-text p {
+  margin-top: 16px;
+  text-decoration: none;
+}
+
+.card-title span {
+  margin-left: 16px;
+  font-size: 14px;
+  background-color: #3478f5;
+  padding: 4px 12px;
+  border-radius: 16px;
+  color: white;
+}
+
+Link {
+  color: #232323;
+  text-decoration: none;
+}
+
+.page {
+  background-color: #3478f5;
+  padding-bottom: 40px;
+  height: 100%;
+}
+
+/* .listTitle {
+  position: absolute;
+  top: 4%;
+  left: 50%;
+  z-index: 9999;
+  transform: translate(-50%, -70%);
+} */

@@ -1,0 +1,37 @@
+** 박소영 : 테이블 2개 , 더미 데이터 CSV파일 한개
+
+-- 워드클라우드용 병원 후기테이블
+CREATE TABLE mypython.reviewboard(
+rnum int(11) not null auto_increment,
+id varchar(20),
+title varchar(50) not null,
+cont text,
+hname 	varchar(50),
+likes int(11),
+hits int(11),
+dname 	varchar(50),
+udate datetime DEFAULT NOW(),
+constraint reviewboard_pk primary key(rnum)
+);
+
+-- 더미 데이터: 치과 후기 데이터 csv 파일
+
+---------------------------------------------------------------------------------------------------------------------------------
+-- 연간의료소비액
+CREATE TABLE annualMedicalSpending(
+year int(10),
+korea_KRWmillion int(100),
+usa_USDmillion int(100),
+japan_JPYmillion int(100),
+china_CNYmillion int(100),
+constraint annualMedicalSpending_pk primary key(year)
+);
+
+-- insert문
+-- annualMedicalSpending 테이블
+insert into annualMedicalSpending values(2016,7447952.3,1177817,962641,1438488.5);
+insert into annualMedicalSpending values(2017,7619490.5,1208652.6,956233.4,1671923.9);
+insert into annualMedicalSpending values(2018,8205559.2,1262810.5,967688.2,2054438.7);
+insert into annualMedicalSpending values(2019,9021810.3,1327525,954367.7,2336385.4);
+insert into annualMedicalSpending values(2020,9064774.8,1243980.1,907014.7,2700857.9);
+insert into annualMedicalSpending values(2021,9771219.4,1378917.1,848215.1,2697431.4);
