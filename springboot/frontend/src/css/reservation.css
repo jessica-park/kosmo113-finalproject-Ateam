@@ -1,0 +1,17 @@
+.title {
+  position: absolute;
+  left: 50%;
+  top: 3%;
+  transform: translate(-50%, -5%);
+  z-index: 9999;
+}
+
+.revPage {
+  margin-top: 64px;
+  padding-top: 40px;
+  min-height: 830px;
+}
+
+.selectBtn {
+  background-color: grey;
+}
